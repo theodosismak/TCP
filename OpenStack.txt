@@ -1,0 +1,253 @@
+mccgroup05@echo:~$ source mccgroup05-project-openrc.sh
+Please enter your OpenStack Password:
+mccgroup05@echo:~$ neutron net-create mccgroup05-net
+Created a new network:
++----------------+--------------------------------------+
+| Field          | Value                                |
++----------------+--------------------------------------+
+| admin_state_up | True                                 |
+| id             | cd084faa-b8ac-49e6-9648-336791fffcef |
+| name           | mccgroup05-net                       |
+| shared         | False                                |
+| status         | ACTIVE                               |
+| subnets        |                                      |
+| tenant_id      | 45c27e29db604a65a0353e868540e9fc     |
++----------------+--------------------------------------+
+mccgroup05@echo:~$ neutron subnet-create mccgroup05-net --name mccgroup05-subnet 10.0.0.1/24
+Created a new subnet:
++------------------+--------------------------------------------+
+| Field            | Value                                      |
++------------------+--------------------------------------------+
+| allocation_pools | {"start": "10.0.0.2", "end": "10.0.0.254"} |
+| cidr             | 10.0.0.0/24                                |
+| dns_nameservers  |                                            |
+| enable_dhcp      | True                                       |
+| gateway_ip       | 10.0.0.1                                   |
+| host_routes      |                                            |
+| id               | 6e7580a9-9dcc-4e68-a2f4-fd557da0b670       |
+| ip_version       | 4                                          |
+| name             | mccgroup05-subnet                          |
+| network_id       | cd084faa-b8ac-49e6-9648-336791fffcef       |
+| tenant_id        | 45c27e29db604a65a0353e868540e9fc           |
++------------------+--------------------------------------------+
+mccgroup05@echo:~$ neutron router-create mccgroup05-router
+Created a new router:
++-----------------------+--------------------------------------+
+| Field                 | Value                                |
++-----------------------+--------------------------------------+
+| admin_state_up        | True                                 |
+| external_gateway_info |                                      |
+| id                    | e1bc849a-7210-4ab9-bf73-98755079b7e2 |
+| name                  | mccgroup05-router                    |
+| status                | ACTIVE                               |
+| tenant_id             | 45c27e29db604a65a0353e868540e9fc     |
++-----------------------+--------------------------------------+
+mccgroup05@echo:~$ neutron router-interface-add mccgroup05-router mccgroup05-subnet
+Added interface dcf5eaf0-9ec4-4937-823c-c686869e31a9 to router mccgroup05-router.
+mccgroup05@echo:~$ neutron router-gateway-set mccgroup05-router ext-net
+Set gateway for router mccgroup05-router
+mccgroup05@echo:~$ neutron floatingip-create ext-net
+Created a new floatingip:
++---------------------+--------------------------------------+
+| Field               | Value                                |
++---------------------+--------------------------------------+
+| fixed_ip_address    |                                      |
+| floating_ip_address | 130.233.42.122                       |
+| floating_network_id | 53afb2ed-8c17-498e-aaac-6cff5ff8bdd5 |
+| id                  | aa129362-b42c-4883-9c15-e4c47936467a |
+| port_id             |                                      |
+| router_id           |                                      |
+| status              | DOWN                                 |
+| tenant_id           | 45c27e29db604a65a0353e868540e9fc     |
++---------------------+--------------------------------------+
+
+// To see your new networks run the following commands
+mccgroup05@echo:~$ neutron net-list
++--------------------------------------+----------------+------------------------------------------------------+
+| id                                   | name           | subnets                                              |
++--------------------------------------+----------------+------------------------------------------------------+
+| 53afb2ed-8c17-498e-aaac-6cff5ff8bdd5 | ext-net        | 23841c60-8269-4c28-b2fd-5d28c36af2ee 130.233.42.0/24 |
+| cd084faa-b8ac-49e6-9648-336791fffcef | mccgroup05-net | 6e7580a9-9dcc-4e68-a2f4-fd557da0b670 10.0.0.0/24     |
++--------------------------------------+----------------+------------------------------------------------------+
+mccgroup05@echo:~$ neutron subnet-list
++--------------------------------------+-------------------+-----------------+-----------------------------------------------------+
+| id                                   | name              | cidr            | allocation_pools                                    |
++--------------------------------------+-------------------+-----------------+-----------------------------------------------------+
+| 23841c60-8269-4c28-b2fd-5d28c36af2ee | ext-subnet        | 130.233.42.0/24 | {"start": "130.233.42.64", "end": "130.233.42.254"} |
+| 6e7580a9-9dcc-4e68-a2f4-fd557da0b670 | mccgroup05-subnet | 10.0.0.0/24     | {"start": "10.0.0.2", "end": "10.0.0.254"}          |
++--------------------------------------+-------------------+-----------------+-----------------------------------------------------+
+mccgroup05@echo:~$ neutron router-list
++--------------------------------------+-------------------+-----------------------------------------------------------------------------+
+| id                                   | name              | external_gateway_info                                                       |
++--------------------------------------+-------------------+-----------------------------------------------------------------------------+
+| e1bc849a-7210-4ab9-bf73-98755079b7e2 | mccgroup05-router | {"network_id": "53afb2ed-8c17-498e-aaac-6cff5ff8bdd5", "enable_snat": true} |
++--------------------------------------+-------------------+-----------------------------------------------------------------------------+
+mccgroup05@echo:~$ neutron floatingip-list
++--------------------------------------+------------------+---------------------+---------+
+| id                                   | fixed_ip_address | floating_ip_address | port_id |
++--------------------------------------+------------------+---------------------+---------+
+| aa129362-b42c-4883-9c15-e4c47936467a |                  | 130.233.42.122      |         |
++--------------------------------------+------------------+---------------------+---------+
+
+// Create key pair
+mccgroup05@echo:~$ source mccgroup05-project-openrc.sh
+Please enter your OpenStack Password:
+mccgroup05@echo:~$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/mccgroup05/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/mccgroup05/.ssh/id_rsa.
+Your public key has been saved in /home/mccgroup05/.ssh/id_rsa.pub.
+The key fingerprint is:
+89:7e:ad:0e:a7:fb:5a:f8:62:84:1c:56:18:7a:48:d9 mccgroup05@echo
+The key's randomart image is:
++--[ RSA 2048]----+
+|  .o.o           |
+| ..oE .          |
+|  o ..           |
+|   .o  . .       |
+|   o o. S        |
+|    o... .       |
+|     .+ + .      |
+|      oB .       |
+|     .+*=        |
++-----------------+
+mccgroup05@echo:~$ nova keypair-add --pub-key ~/.ssh/id_rsa.pub echo-key
+
+// Launch instance
+
+mccgroup05@echo:~$ nova flavor-list
++--------------------------------------+-----------+-----------+------+-----------+------+-------+-------------+-----------+
+| ID                                   | Name      | Memory_MB | Disk | Ephemeral | Swap | VCPUs | RXTX_Factor | Is_Public |
++--------------------------------------+-----------+-----------+------+-----------+------+-------+-------------+-----------+
+| 2                                    | m1.small  | 2048      | 20   | 0         |      | 1     | 1.0         | True      |
+| 3                                    | m1.medium | 4096      | 40   | 0         |      | 2     | 1.0         | True      |
+| 4                                    | m1.large  | 8192      | 80   | 0         |      | 4     | 1.0         | True      |
+| 4d3a6167-54d0-46d3-b5dc-2fa4049e4a25 | m1.tiny   | 512       | 3    | 0         |      | 1     | 1.0         | True      |
+| 5                                    | m1.xlarge | 16384     | 160  | 0         |      | 8     | 1.0         | True      |
+| e247f7cf-040f-423c-8daa-081c37700573 | m1.mini   | 512       | 7    | 0         |      | 1     | 1.0         | True      |
++--------------------------------------+-----------+-----------+------+-----------+------+-------+-------------+-----------+
+mccgroup05@echo:~$ nova image-list
++--------------------------------------+-------------------------------------------+--------+--------+
+| ID                                   | Name                                      | Status | Server |
++--------------------------------------+-------------------------------------------+--------+--------+
+| b200af3e-b6f0-451c-8431-8293a3dfc949 | Ubuntu-14.04.1_LTS_server_AMD_64_20150123 | ACTIVE |        |
++--------------------------------------+-------------------------------------------+--------+--------+
+mccgroup05@echo:~$ neutron net-list
++--------------------------------------+----------------+------------------------------------------------------+
+| id                                   | name           | subnets                                              |
++--------------------------------------+----------------+------------------------------------------------------+
+| 53afb2ed-8c17-498e-aaac-6cff5ff8bdd5 | ext-net        | 23841c60-8269-4c28-b2fd-5d28c36af2ee 130.233.42.0/24 |
+| cd084faa-b8ac-49e6-9648-336791fffcef | mccgroup05-net | 6e7580a9-9dcc-4e68-a2f4-fd557da0b670 10.0.0.0/24     |
++--------------------------------------+----------------+------------------------------------------------------+
+mccgroup05@echo:~$ nova secgroup-list
++--------------------------------------+---------+-------------+
+| Id                                   | Name    | Description |
++--------------------------------------+---------+-------------+
+| db620c33-3aa5-4390-acff-4c3d2fb47fa5 | default | default     |
++--------------------------------------+---------+-------------+
+mccgroup05@echo:~$ nova boot --flavor m1.mini --image Ubuntu-14.04.1_LTS_server_AMD_64_20150123 --nic net-id=cd084faa-b8ac-49e6-9648-336791fffcef --security-group default --key-name echo-key instancegroup05
++--------------------------------------+----------------------------------------------------------------------------------+
+| Property                             | Value                                                                            |
++--------------------------------------+----------------------------------------------------------------------------------+
+| OS-DCF:diskConfig                    | MANUAL                                                                           |
+| OS-EXT-AZ:availability_zone          | nova                                                                             |
+| OS-EXT-STS:power_state               | 0                                                                                |
+| OS-EXT-STS:task_state                | scheduling                                                                       |
+| OS-EXT-STS:vm_state                  | building                                                                         |
+| OS-SRV-USG:launched_at               | -                                                                                |
+| OS-SRV-USG:terminated_at             | -                                                                                |
+| accessIPv4                           |                                                                                  |
+| accessIPv6                           |                                                                                  |
+| adminPass                            | QQpDXY8455Fy                                                                     |
+| config_drive                         |                                                                                  |
+| created                              | 2015-11-08T12:49:58Z                                                             |
+| flavor                               | m1.mini (e247f7cf-040f-423c-8daa-081c37700573)                                   |
+| hostId                               |                                                                                  |
+| id                                   | d33563a1-859c-4944-a7b6-7a53488d2840                                             |
+| image                                | Ubuntu-14.04.1_LTS_server_AMD_64_20150123 (b200af3e-b6f0-451c-8431-8293a3dfc949) |
+| key_name                             | echo-key                                                                         |
+| metadata                             | {}                                                                               |
+| name                                 | instancegroup05                                                                  |
+| os-extended-volumes:volumes_attached | []                                                                               |
+| progress                             | 0                                                                                |
+| security_groups                      | default                                                                          |
+| status                               | BUILD                                                                            |
+| tenant_id                            | 45c27e29db604a65a0353e868540e9fc                                                 |
+| updated                              | 2015-11-08T12:49:58Z                                                             |
+| user_id                              | 17c32cf0cb7e4a35bdee9dd5206aaee3                                                 |
++--------------------------------------+----------------------------------------------------------------------------------+
+mccgroup05@echo:~$ nova list
++--------------------------------------+-----------------+--------+------------+-------------+-------------------------+
+| ID                                   | Name            | Status | Task State | Power State | Networks                |
++--------------------------------------+-----------------+--------+------------+-------------+-------------------------+
+| d33563a1-859c-4944-a7b6-7a53488d2840 | instancegroup05 | ACTIVE | -          | Running     | mccgroup05-net=10.0.0.5 |
++--------------------------------------+-----------------+--------+------------+-------------+-------------------------+
+mccgroup05@echo:~$ nova show instancegroup05
++--------------------------------------+----------------------------------------------------------------------------------+
+| Property                             | Value                                                                            |
++--------------------------------------+----------------------------------------------------------------------------------+
+| OS-DCF:diskConfig                    | MANUAL                                                                           |
+| OS-EXT-AZ:availability_zone          | nova                                                                             |
+| OS-EXT-STS:power_state               | 1                                                                                |
+| OS-EXT-STS:task_state                | -                                                                                |
+| OS-EXT-STS:vm_state                  | active                                                                           |
+| OS-SRV-USG:launched_at               | 2015-11-08T12:49:42.000000                                                       |
+| OS-SRV-USG:terminated_at             | -                                                                                |
+| accessIPv4                           |                                                                                  |
+| accessIPv6                           |                                                                                  |
+| config_drive                         |                                                                                  |
+| created                              | 2015-11-08T12:49:58Z                                                             |
+| flavor                               | m1.mini (e247f7cf-040f-423c-8daa-081c37700573)                                   |
+| hostId                               | 113dd59354905b91f78580cc7c3895b04c9f1b21a87741d8d635b4a4                         |
+| id                                   | d33563a1-859c-4944-a7b6-7a53488d2840                                             |
+| image                                | Ubuntu-14.04.1_LTS_server_AMD_64_20150123 (b200af3e-b6f0-451c-8431-8293a3dfc949) |
+| key_name                             | echo-key                                                                         |
+| mccgroup05-net network               | 10.0.0.5                                                                         |
+| metadata                             | {}                                                                               |
+| name                                 | instancegroup05                                                                  |
+| os-extended-volumes:volumes_attached | []                                                                               |
+| progress                             | 0                                                                                |
+| security_groups                      | default                                                                          |
+| status                               | ACTIVE                                                                           |
+| tenant_id                            | 45c27e29db604a65a0353e868540e9fc                                                 |
+| updated                              | 2015-11-08T12:50:04Z                                                             |
+| user_id                              | 17c32cf0cb7e4a35bdee9dd5206aaee3                                                 |
++--------------------------------------+----------------------------------------------------------------------------------+
+mccgroup05@echo:~$ neutron floating-ip-list
++--------------------------------------+------------------+---------------------+--------------------------------------+
+| id                                   | fixed_ip_address | floating_ip_address | port_id                              |
++--------------------------------------+------------------+---------------------+--------------------------------------+
+| 47fa2dba-1f06-4cf0-8971-642046d2a477 | 10.0.0.5         | 130.233.42.186      | c83b7cc8-4dd8-4a22-9a62-b147ef9592c5 |
++--------------------------------------+------------------+---------------------+--------------------------------------+
+mccgroup05@echo:~$ nova floating-ip-associate instancegroup05 130.233.42.186
+mccgroup05@echo:~$ nova secgroup-add-rule default tcp 22 22 0.0.0.0/0
++-------------+-----------+---------+-----------+--------------+
+| IP Protocol | From Port | To Port | IP Range  | Source Group |
++-------------+-----------+---------+-----------+--------------+
+| tcp         | 22        | 22      | 0.0.0.0/0 |              |
++-------------+-----------+---------+-----------+--------------+
+mccgroup05@echo:~$ nova secgroup-add-rule default tcp 8080 8080 0.0.0.0/0
++-------------+-----------+---------+-----------+--------------+
+| IP Protocol | From Port | To Port | IP Range  | Source Group |
++-------------+-----------+---------+-----------+--------------+
+| tcp         | 8080      | 8080    | 0.0.0.0/0 |              |
++-------------+-----------+---------+-----------+--------------+
+mccgroup05@echo:~$ nova secgroup-add-rule default icmp -1 -1 0.0.0.0/0
++-------------+-----------+---------+-----------+--------------+
+| IP Protocol | From Port | To Port | IP Range  | Source Group |
++-------------+-----------+---------+-----------+--------------+
+| icmp        | -1        | -1      | 0.0.0.0/0 |              |
++-------------+-----------+---------+-----------+--------------+
+mccgroup05@echo:~$ nova secgroup-list-rules default
++-------------+-----------+---------+-----------+--------------+
+| IP Protocol | From Port | To Port | IP Range  | Source Group |
++-------------+-----------+---------+-----------+--------------+
+| tcp         | 22        | 22      | 0.0.0.0/0 |              |
+|             |           |         | 0.0.0.0/0 |              |
+| tcp         | 8080      | 8080    | 0.0.0.0/0 |              |
+| icmp        | -1        | -1      | 0.0.0.0/0 |              |
++-------------+-----------+---------+-----------+--------------+
+
+mccgroup05@echo:~$ ssh ubuntu@130.233.42.186

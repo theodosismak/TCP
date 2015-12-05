@@ -1,6 +1,5 @@
-TCP
-Experimentation with Linux TCP versions
----------------------------------------
+Experimentation with different Linux TCP versions
+-------------------------------------------------
 
 We study the behavior of different TCP congestion control algorithms according to different network performance
 parameters. Specifically, it is tested how different TCP versions react to the traffic congestion considering
